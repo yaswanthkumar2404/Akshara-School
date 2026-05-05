@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Akshara E M School</title>
+
+<style>
+body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    background: linear-gradient(to right, #dff6f0, #f0fbff);
+    text-align: center;
+    padding: 10px;
+}
+
+header {
+    background: linear-gradient(135deg, #2a9d8f, #1d7874);
+    color: white;
+    padding: 20px 10px;
+    border-radius: 10px;
+}
+
+.address { font-size: 13px; }
+
+/* LINKS */
+.links a {
+    display: block;
+    margin: 8px auto;
+    padding: 12px;
+    background: white;
+    color: #2a9d8f;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: bold;
+    max-width: 250px;
+}
+
+/* BUTTONS */
+button {
+    padding: 14px;
+    margin: 8px;
+    border: none;
+    background: #ff7a59;
+    color: white;
+    border-radius: 25px;
+    cursor: pointer;
+    width: 80%;
+    max-width: 300px;
+    font-size: 16px;
+}
+
+/* MEMORY GRID (RESPONSIVE) */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.card {
+    aspect-ratio: 1/1;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #84fab0, #8fd3f4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.hidden {
+    background: #ccc;
+    color: transparent;
+}
+
+/* INPUT */
+input {
+    padding: 12px;
+    font-size: 18px;
+    margin-top: 10px;
+    width: 80%;
+    max-width: 250px;
+}
+
+.info-box {
+    margin: 15px;
+    padding: 15px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    line-height: 1.6;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h2>Akshara E M School</h2>
+    <div class="address">
+        Rama theatre backside, TUNI, Kakinada Dist., Andhra Pradesh - 533401
+    </div>
+    <div class="address">Recognised by Govt. of Andhra Pradesh</div>
+</header>
+
+<!-- LINKS -->
+<div>
+    <h3>Connect With Us</h3>
+    <div class="links">
+        <a href="https://www.youtube.com/@aksharaenglishmediumschool3860/videos">YouTube</a>
+        <a href="https://www.instagram.com/aksharaemschooltuni/?hl=en">Instagram</a>
+        <a href="mailto:aksharaschool.tuni@gmail.com">Email</a>
+        <a href="tel:+919393958558">Call Us</a>
+    </div>
+</div>
+
+<!-- PROMO -->
+<div class="info-box">
+    <h3 style="color:#2a9d8f;">Welcome to Our School</h3>
+    <p>
+        Learning beyond textbooks. Building confidence, creativity, and strong academic foundations.
+    </p>
+    <p>
+        Safe environment, caring teachers, and all-round development for every child.
+    </p>
+    <p style="font-weight:bold; color:#e76f51;">
+        🚀 Admissions Open!
+    </p>
+</div>
+
+<!-- GAMES -->
+<div>
+    <h3>🎮 Play & Learn</h3>
+
+    <button onclick="showGame('memory')">Memory Game</button>
+    <button onclick="showGame('math')">Math Game</button>
+
+    <!-- MEMORY -->
+    <div id="memory" style="display:none;">
+        <p>Matches: <span id="matchScore">0</span></p>
+        <p>⏱ Time: <span id="time">0</span></p>
+        <p>🏆 Best: <span id="bestTime">--</span></p>
+
+        <div class="grid" id="grid"></div>
+        <button onclick="startMemoryGame()">Retry</button>
+    </div>
+
+    <!-- MATH -->
+    <div id="math" style="display:none;">
+        <button onclick="setLevel('easy')">Easy</button>
+        <button onclick="setLevel('medium')">Medium</button>
+        <button onclick="setLevel('hard')">Hard</button>
+
+        <p id="question"></p>
+
+        <input type="number" id="mathInput">
+        <br>
+        <button onclick="checkMath()">Submit</button>
+
+        <p id="mathResult"></p>
+        <p>Score: <span id="mathScore">0</span></p>
+    </div>
+</div>
+
+<script>
+
+/* SOUNDS */
+const soundMatch = new Audio("https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg");
+const soundWrong = new Audio("https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg");
+const soundWin = new Audio("https://actions.google.com/sounds/v1/crowds/applause.ogg");
+
+function showGame(game){
+document.getElementById("memory").style.display="none";
+document.getElementById("math").style.display="none";
+document.getElementById(game).style.display="block";
+}
+
+/* MEMORY */
+const sets=[
+["🐶","🐶","🐱","🐱","🍎","🍎","🚗","🚗"],
+["🍕","🍕","🍔","🍔","🍟","🍟","🥤","🥤"],
+["🌟","🌟","🌈","🌈","⚽","⚽","🎈","🎈"]
+];
+
+let first,second,matches=0,seconds=0,timer;
+
+function startMemoryGame(){
+clearInterval(timer);
+seconds=0;matches=0;
+document.getElementById("time").innerText=0;
+document.getElementById("matchScore").innerText=0;
+
+timer=setInterval(()=>{
+seconds++;
+document.getElementById("time").innerText=seconds;
+},1000);
+
+let grid=document.getElementById("grid");
+grid.innerHTML="";
+
+let data=sets[Math.random()*sets.length|0].sort(()=>0.5-Math.random());
+
+data.forEach(icon=>{
+let card=document.createElement("div");
+card.className="card hidden";
+card.innerText=icon;
+
+card.onclick=()=>{
+if(!card.classList.contains("hidden")||second)return;
+
+card.classList.remove("hidden");
+
+if(!first) first=card;
+else{
+second=card;
+
+if(first.innerText===second.innerText){
+soundMatch.play();
+matches++;
+document.getElementById("matchScore").innerText=matches;
+first=null;second=null;
+
+if(matches===4){
+clearInterval(timer);
+soundWin.play();
+
+let best=localStorage.getItem("bestTime");
+if(!best||seconds<best){
+localStorage.setItem("bestTime",seconds);
+document.getElementById("bestTime").innerText=seconds;
+}
+
+alert("Completed in "+seconds+" sec!");
+}
+}
+else{
+soundWrong.play();
+setTimeout(()=>{
+first.classList.add("hidden");
+second.classList.add("hidden");
+first=null;second=null;
+},500);
+}
+}
+};
+
+grid.appendChild(card);
+});
+
+let best=localStorage.getItem("bestTime");
+if(best)document.getElementById("bestTime").innerText=best;
+}
+
+startMemoryGame();
+
+/* MATH */
+let n1,n2,op,ans,score=0,level="easy";
+
+function setLevel(l){level=l;generate();}
+
+function generate(){
+if(level==="easy"){n1=Math.random()*10|0;n2=Math.random()*10|0;}
+if(level==="medium"){n1=Math.random()*50|0;n2=Math.random()*20|0;}
+if(level==="hard"){n1=Math.random()*100|0;n2=Math.random()*50|0;}
+
+let ops=["+","-","*","/"];
+op=ops[Math.random()*4|0];
+
+if(op==="+")ans=n1+n2;
+if(op===" -")ans=n1-n2;
+if(op==="*")ans=n1*n2;
+if(op==="/"){ans=n1;n1=n1*n2;}
+
+document.getElementById("question").innerText=n1+" "+op+" "+n2+" = ?";
+}
+
+function checkMath(){
+let val=parseFloat(document.getElementById("mathInput").value);
+
+if(val==ans){
+score++;
+document.getElementById("mathResult").innerText="Correct!";
+}else{
+document.getElementById("mathResult").innerText="Wrong! "+ans;
+}
+
+document.getElementById("mathScore").innerText=score;
+document.getElementById("mathInput").value="";
+generate();
+}
+
+generate();
+
+</script>
+
+</body>
+</html>
